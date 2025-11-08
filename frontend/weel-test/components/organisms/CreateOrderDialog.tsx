@@ -130,18 +130,19 @@ export const CreateOrderDialog: React.FC<CreateOrderDialogProps> = ({ onClose })
 
                     {(values.delivery_preference === "DELIVERY" ||
                       values.delivery_preference === "CURBSIDE") && (
-                      <FormField
-                        name="delivery_address"
-                        label="Delivery Address"
-                        placeholder="123 Main St, New York, NY 10001"
-                      />
+                        <>
+                          <FormField
+                            name="postal_code"
+                            label="Postal Code (Optional)"
+                            placeholder="10001"
+                          />
+                          <FormField
+                            name="delivery_address"
+                            label="Delivery Address"
+                            placeholder="123 Main St, New York, NY 10001"
+                          />
+                      </>
                     )}
-
-                    <FormField
-                      name="postal_code"
-                      label="Postal Code (Optional)"
-                      placeholder="10001"
-                    />
 
                     <div className="flex gap-2 pt-4">
                       {isAIEnabled ? (
