@@ -1,0 +1,10 @@
+bin/
+*.test
+*.out
+.git
+.env
+.env.local
+*.md
+coverage.html
+coverage.out
+.DS_Store

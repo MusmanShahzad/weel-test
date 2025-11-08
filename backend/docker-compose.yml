@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: weel-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: weel_db
+    ports:
+      # Using port 5433 on host to avoid conflict with local PostgreSQL on 5432
+      # If you don't have local PostgreSQL, you can change this to "5432:5432"
+      # For local development with existing PostgreSQL, keep this as 5433
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: weel-api
+    ports:
+      - "8080:8080"
+    environment:
+      SERVER_PORT: 8080
+      SERVER_HOST: 0.0.0.0
+      # Database connection within Docker network (uses service name)
+      DB_HOST: postgres
+      DB_PORT: 5432  # Internal container port (not the mapped host port)
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: weel_db
+      DB_SSLMODE: disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: sh -c "./migrate -command up && ./server"
+
+volumes:
+  postgres_data:
+
